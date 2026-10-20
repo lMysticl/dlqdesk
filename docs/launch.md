@@ -4,7 +4,7 @@ These are drafts for the maintainer to post after reviewing the release.
 
 ## One-sentence introduction
 
-DLQDesk gives Kafka dead letters a reviewable recovery path: inspect, repair JSON, freeze a preview, and replay with a persistent delivery ledger.
+DLQDesk lets you inspect failed Kafka messages, fix their JSON and send them again with a clear delivery history.
 
 ## A useful demo
 
@@ -18,6 +18,5 @@ Kafka community showcases, Spring Kafka discussions, developer tooling roundups,
 Check each community's current posting rules before posting. No outreach has been
 sent by this repository setup. GitHub stars and downloads are outcomes to measure,
 not guarantees. Start with reproducible setup feedback and useful issue reports.
-
 
 For the source-backed publication order, exact destinations and tailored draft replies, use [the distribution packet](distribution.md). The longer technical article is [ready for review](article.md).
