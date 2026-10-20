@@ -6,13 +6,13 @@ RUN npm ci
 COPY ui/ ./
 RUN npm run build
 
-FROM eclipse-temurin:21-jdk AS app
+# Same Maven version as the wrapper; the wrapper needs unzip, which the Temurin JDK image lacks.
+FROM maven:3.9.11-eclipse-temurin-21 AS app
 WORKDIR /src
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml LICENSE NOTICE ./
+COPY pom.xml LICENSE NOTICE ./
 COPY src/ src/
 COPY --from=ui /src/ui/dist ui/dist
-RUN ./mvnw -B -q -DskipTests package && cp target/dlqdesk-*.jar /src/dlqdesk.jar
+RUN mvn -B -q -DskipTests package && cp target/dlqdesk-*.jar /src/dlqdesk.jar
 
 FROM eclipse-temurin:21-jre
 LABEL org.opencontainers.image.source="https://github.com/lMysticl/dlqdesk" \
