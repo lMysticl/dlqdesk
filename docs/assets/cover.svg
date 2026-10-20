@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-label="DLQDesk: Failed delivery. Deliberate recovery.">
+<rect width="1280" height="360" rx="16" fill="#111f2e"/><path d="M860 0v360M1010 0v360M1160 0v360M770 90h510M770 240h510" stroke="#26394c" stroke-width="1"/>
+<rect x="58" y="47" width="40" height="43" rx="10" fill="#ffbd6d"/><text x="78" y="77" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="28" font-weight="700" fill="#111f2e">D</text>
+<text x="114" y="78" font-family="Segoe UI,Arial,sans-serif" font-size="27" font-weight="600" fill="#f3f7fb">DLQDesk</text>
+<text x="58" y="165" font-family="Segoe UI,Arial,sans-serif" font-size="40" font-weight="600" letter-spacing="-1" fill="#f3f7fb">Failed delivery. Deliberate recovery.</text>
+<text x="60" y="209" font-family="Segoe UI,Arial,sans-serif" font-size="19" fill="#b5c4d6">Inspect, repair and replay Kafka dead letters.</text>
+<text x="60" y="302" font-family="Segoe UI,Arial,sans-serif" font-size="14" letter-spacing="2" fill="#ffbd6d">JAVA 21+   /   REACT   /   SELF-HOSTED   /   MIT</text>
+<g transform="translate(900 118)"><rect width="250" height="132" rx="12" fill="#192c3e" stroke="#3b5268"/><path d="M0 36h250" stroke="#3b5268"/><circle cx="20" cy="18" r="4" fill="#ffbd6d"/><path d="M20 62h130M20 85h80M20 108h106" stroke="#6e879f" stroke-width="6" stroke-linecap="round"/><rect x="178" y="57" width="49" height="53" rx="7" fill="#ffbd6d"/><path d="m191 83 8 8 15-19" fill="none" stroke="#142a37" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g></svg>

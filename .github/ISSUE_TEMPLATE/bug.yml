@@ -1,0 +1,17 @@
+name: Bug report
+description: A reproducible problem in DLQDesk
+body:
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: What happened and how can we reproduce it?
+      description: Include expected behavior, the smallest reproduction and relevant logs with secrets removed.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Version and environment
+      placeholder: v0.1.0, Java 21, Windows 11 / Linux
+    validations:
+      required: true

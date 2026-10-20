@@ -1,0 +1,7 @@
+DLQDesk
+Copyright (c) 2026 Pavel Putrenkov and contributors
+
+Original project code is licensed under MIT. Dependencies retain their own licenses.
+React, React DOM and Lucide license texts are bundled with the UI in
+third-party-licenses.txt. Executable JARs retain nested dependencies and their
+META-INF license/notice files. This MIT license does not relicense those dependencies.
