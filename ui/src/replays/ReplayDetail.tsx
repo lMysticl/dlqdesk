@@ -9,6 +9,7 @@ import { timestamp, label } from "../workspace/format";
 import { usePolling } from "../workspace/usePolling";
 import { useAction } from "../workspace/useAction";
 import { EntryDialog } from "./EntryDialog";
+import { ErrorBanner } from "../components/ErrorBanner";
 
 export function ReplayDetail({ client, id }: { client: Client; id: string }) {
   const request = useCallback(
@@ -113,11 +114,7 @@ export function ReplayDetail({ client, id }: { client: Client; id: string }) {
           SENT means Kafka acknowledged the publish. It does not prove downstream processing.
         </p>
       </div>
-      {(action.error || error) && (
-        <p className="error-banner" role="alert">
-          {action.error || error?.message}
-        </p>
-      )}
+      <ErrorBanner message={action.error || error?.message} />
       {run.unknown > 0 && (
         <div className="callout">
           Delivery is uncertain for {run.unknown} record(s). Inspect the destination, then open each
@@ -200,11 +197,7 @@ export function ReplayDetail({ client, id }: { client: Client; id: string }) {
             <p className="field-help">
               Previously acknowledged and explicitly skipped entries are never resent by resume.
             </p>
-            {action.error && (
-              <p role="alert" className="error-banner">
-                {action.error}
-              </p>
-            )}
+            <ErrorBanner message={action.error} />
             <div className="modal-actions">
               <button
                 className="button"

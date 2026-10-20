@@ -4,6 +4,7 @@ import type { Selection, Source } from "../api/types";
 import { referenceId } from "../api/types";
 import { usePolling } from "../workspace/usePolling";
 import { timestamp, pretty } from "../workspace/format";
+import { ErrorBanner } from "../components/ErrorBanner";
 
 export function RecordInspector({
   client,
@@ -34,14 +35,7 @@ export function RecordInspector({
         </div>
         <span className="version-tag">READ ONLY SOURCE</span>
       </div>
-      {error && (
-        <div className="error-banner" role="alert">
-          {error.message}
-          <button onClick={reload} className="text-button">
-            Retry
-          </button>
-        </div>
-      )}
+      <ErrorBanner message={error?.message} onRetry={reload} />
       {data ? (
         <Editor key={data.sourceHash} source={data} selection={selection} save={save} />
       ) : (
@@ -135,11 +129,7 @@ function Editor({
                     <pre>{source.payloadBase64}</pre>
                   </details>
                 )}
-                {error && (
-                  <p role="alert" className="error-banner">
-                    {error}
-                  </p>
-                )}
+                <ErrorBanner message={error} />
                 <button
                   className="button primary"
                   disabled={source.payloadBase64 === null}

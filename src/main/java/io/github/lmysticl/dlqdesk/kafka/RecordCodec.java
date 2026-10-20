@@ -6,11 +6,15 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HexFormat;
+import java.util.List;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.header.Headers;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class RecordCodec {
+  private static final int MAX_HEADERS = 128;
+
   private final PayloadCodec payloads;
 
   public RecordCodec(PayloadCodec payloads) {
@@ -18,36 +22,15 @@ public final class RecordCodec {
   }
 
   public InboxRecords.Source source(ConsumerRecord<byte[], byte[]> record) {
-    var headers = new ArrayList<InboxRecords.Header>();
-    int headerBytes = 0;
-    for (var header : record.headers()) {
-      headerBytes +=
-          header.key().getBytes(StandardCharsets.UTF_8).length
-              + (header.value() == null ? 0 : header.value().length);
-      if (headers.size() < 128 && headerBytes <= PayloadCodec.MAX_BYTES)
-        headers.add(
-            new InboxRecords.Header(
-                header.key(),
-                PayloadCodec.encode(header.value()),
-                PayloadCodec.displayText(header.value())));
-    }
+    var headers = inspect(record.headers());
     byte[] value = record.value();
     boolean bounded =
         value != null
             && value.length <= PayloadCodec.MAX_BYTES
             && (record.key() == null || record.key().length <= PayloadCodec.MAX_BYTES)
-            && record.headers().toArray().length <= 128
-            && headerBytes <= PayloadCodec.MAX_BYTES;
+            && headers.withinLimits();
     String text = bounded ? PayloadCodec.utf8(value) : null;
     boolean valid = text != null && payloads.isJson(text);
-    String problem =
-        value == null
-            ? "Tombstone replay is not supported in this release."
-            : !bounded
-                ? "Payload, key or headers exceed the inspection limit."
-                : text == null
-                    ? "Binary payload: supply a replacement JSON value before previewing."
-                    : !valid ? "Invalid JSON: edit the payload before previewing." : null;
     return new InboxRecords.Source(
         new InboxRecords.Reference(record.partition(), Long.toString(record.offset())),
         bounded ? PayloadCodec.encode(record.key()) : null,
@@ -55,10 +38,10 @@ public final class RecordCodec {
         bounded ? PayloadCodec.encode(value) : null,
         text,
         record.timestamp(),
-        headers,
+        headers.kept(),
         fingerprint(record),
         valid,
-        problem);
+        problem(value, bounded, text, valid));
   }
 
   public InboxRecords.Summary summary(InboxRecords.Source source) {
@@ -77,6 +60,36 @@ public final class RecordCodec {
         source.validJson(),
         source.problem(),
         error);
+  }
+
+  /** Headers shown in the inbox, and whether all of them fit the inspection limits. */
+  private record InspectedHeaders(List<InboxRecords.Header> kept, boolean withinLimits) {}
+
+  private static InspectedHeaders inspect(Headers headers) {
+    var kept = new ArrayList<InboxRecords.Header>();
+    int count = 0;
+    int bytes = 0;
+    for (var header : headers) {
+      count++;
+      bytes +=
+          header.key().getBytes(StandardCharsets.UTF_8).length
+              + (header.value() == null ? 0 : header.value().length);
+      if (kept.size() < MAX_HEADERS && bytes <= PayloadCodec.MAX_BYTES)
+        kept.add(
+            new InboxRecords.Header(
+                header.key(),
+                PayloadCodec.encode(header.value()),
+                PayloadCodec.displayText(header.value())));
+    }
+    return new InspectedHeaders(kept, count <= MAX_HEADERS && bytes <= PayloadCodec.MAX_BYTES);
+  }
+
+  /** Why the record cannot be replayed as it is, or null when it can. */
+  private static String problem(byte[] value, boolean bounded, String text, boolean valid) {
+    if (value == null) return "Tombstone replay is not supported in this release.";
+    if (!bounded) return "Payload, key or headers exceed the inspection limit.";
+    if (text == null) return "Binary payload: supply a replacement JSON value before previewing.";
+    return valid ? null : "Invalid JSON: edit the payload before previewing.";
   }
 
   private static String fingerprint(ConsumerRecord<byte[], byte[]> record) {

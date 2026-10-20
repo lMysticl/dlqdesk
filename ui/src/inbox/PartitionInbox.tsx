@@ -5,6 +5,7 @@ import type { Message, Page, Selection } from "../api/types";
 import { referenceId } from "../api/types";
 import { RecordInspector } from "./RecordInspector";
 import { usePolling } from "../workspace/usePolling";
+import { ErrorBanner } from "../components/ErrorBanner";
 
 export function PartitionInbox({
   client,
@@ -67,11 +68,7 @@ export function PartitionInbox({
             <Search size={14} />
           </button>
         </form>
-        {error && (
-          <div className="error-banner" role="alert">
-            {error.message}
-          </div>
-        )}
+        <ErrorBanner message={error?.message} />
         <ol className="message-index" aria-label="Source messages">
           {data?.messages.map((message) => {
             const id = referenceId(message.reference);

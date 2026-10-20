@@ -2,6 +2,7 @@ import { Brand } from "./Brand";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { ArrowRight, KeyRound, ShieldCheck } from "lucide-react";
+import { ErrorBanner } from "../components/ErrorBanner";
 
 export function Login({
   initialToken,
@@ -68,11 +69,7 @@ export function Login({
             minLength={32}
             disabled={pending}
           />
-          {error && (
-            <p className="error-banner" role="alert">
-              {error}
-            </p>
-          )}
+          <ErrorBanner message={error} />
           <button className="button primary wide" disabled={pending || token.length < 32}>
             {pending ? "Connecting…" : "Connect workspace"}
             <ArrowRight size={16} />

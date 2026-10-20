@@ -7,6 +7,7 @@ import { referenceId } from "../api/types";
 import { PartitionInbox } from "./PartitionInbox";
 import { usePolling } from "../workspace/usePolling";
 import { useAction } from "../workspace/useAction";
+import { ErrorBanner } from "../components/ErrorBanner";
 
 export function InboxWorkspace({
   client,
@@ -81,19 +82,8 @@ export function InboxWorkspace({
           Demo fixture · each seed adds 12 records, including one malformed JSON payload.
         </div>
       )}
-      {error && (
-        <div className="error-banner" role="alert">
-          {error.message}
-          <button className="text-button" onClick={reload}>
-            Retry connection
-          </button>
-        </div>
-      )}
-      {action.error && (
-        <p className="error-banner" role="alert">
-          {action.error}
-        </p>
-      )}
+      <ErrorBanner message={error?.message} onRetry={reload} retryLabel="Retry connection" />
+      <ErrorBanner message={action.error} />
       <div className="inbox-controls">
         <label htmlFor="partition">Partition</label>
         <select

@@ -6,6 +6,7 @@ import { Status } from "../components/Status";
 import { timestamp } from "../workspace/format";
 import { usePolling } from "../workspace/usePolling";
 import { ReplayDetail } from "./ReplayDetail";
+import { ErrorBanner } from "../components/ErrorBanner";
 
 export function ReplayWorkspace({
   client,
@@ -39,14 +40,7 @@ export function ReplayWorkspace({
           Back to inbox
         </button>
       </div>
-      {error && (
-        <div className="error-banner" role="alert">
-          {error.message}
-          <button onClick={reload} className="text-button">
-            Retry
-          </button>
-        </div>
-      )}
+      <ErrorBanner message={error?.message} onRetry={reload} />
       <div className="replay-workspace">
         <section className="panel">
           <div className="panel-heading">

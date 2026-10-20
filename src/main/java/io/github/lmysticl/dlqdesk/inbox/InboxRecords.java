@@ -14,7 +14,7 @@ public final class InboxRecords {
       try {
         Long.parseLong(offset);
       } catch (NumberFormatException failure) {
-        throw new IllegalArgumentException("Offset exceeds Kafka's signed 64-bit range");
+        throw new IllegalArgumentException("Offset exceeds Kafka's signed 64-bit range", failure);
       }
     }
 

@@ -7,6 +7,7 @@ import { Status } from "../components/Status";
 import { pretty } from "../workspace/format";
 import { usePolling } from "../workspace/usePolling";
 import { useAction } from "../workspace/useAction";
+import { ErrorBanner } from "../components/ErrorBanner";
 
 export function EntryDialog({
   client,
@@ -46,11 +47,7 @@ export function EntryDialog({
           <br />
           Output SHA256 {entry.payloadHash}
         </p>
-        {error && (
-          <p role="alert" className="error-banner">
-            {error.message}
-          </p>
-        )}
+        <ErrorBanner message={error?.message} />
         {data && (
           <>
             <h3>Output payload</h3>
@@ -90,11 +87,7 @@ export function EntryDialog({
               onChange={(event) => setReason(event.target.value)}
               placeholder="Record the destination evidence and your decision…"
             />
-            {action.error && (
-              <p className="error-banner" role="alert">
-                {action.error}
-              </p>
-            )}
+            <ErrorBanner message={action.error} />
             <button
               className="button primary"
               disabled={action.pending || !reason.trim()}

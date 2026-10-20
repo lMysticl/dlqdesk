@@ -15,7 +15,11 @@ public final class DeskFailure extends RuntimeException {
   private final Kind kind;
 
   public DeskFailure(Kind kind, String detail) {
-    super(detail);
+    this(kind, detail, null);
+  }
+
+  public DeskFailure(Kind kind, String detail, Throwable cause) {
+    super(detail, cause);
     this.kind = kind;
   }
 
