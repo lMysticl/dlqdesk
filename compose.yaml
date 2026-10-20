@@ -1,4 +1,6 @@
-# Local synthetic-data broker. Start the application JAR on the host.
+# Local synthetic-data demo.
+#   docker compose up -d --wait                       Kafka only; run the JAR on the host
+#   docker compose --profile app up -d --build --wait  Kafka and DLQDesk in containers
 services:
   kafka:
     image: apache/kafka:4.1.1
@@ -9,10 +11,11 @@ services:
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:59092
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,INTERNAL://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:59092,INTERNAL://kafka:29092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -24,3 +27,21 @@ services:
       interval: 10s
       timeout: 8s
       retries: 12
+
+  dlqdesk:
+    profiles: ["app"]
+    build: .
+    image: dlqdesk:local
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8092:8092"
+    environment:
+      SPRING_PROFILES_ACTIVE: demo
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    volumes:
+      - dlqdesk-data:/app/data
+
+volumes:
+  dlqdesk-data:

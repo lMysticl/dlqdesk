@@ -89,3 +89,24 @@ jobs:
             **/target/failsafe-reports/*.xml
             ui/test-results/
           if-no-files-found: error
+
+  container:
+    name: Container demo
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build and start Kafka and DLQDesk
+        run: docker compose --profile app up -d --build --wait
+      - name: Serve the UI
+        run: |
+          curl -fsS http://127.0.0.1:8092/ | grep -qi '<div id="root"'
+          docker compose --profile app ps
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose --profile app logs --no-color
+      - name: Stop containers
+        if: always()
+        run: docker compose --profile app down -v

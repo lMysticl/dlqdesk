@@ -1,7 +1,7 @@
 # Application gallery
 
 These captures show the packaged application connected to the synthetic-data
-Kafka broker. The generated art-direction reference is not used as a product image.
+Kafka broker.
 
 ## Inspect and repair
 

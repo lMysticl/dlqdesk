@@ -22,17 +22,20 @@ Inspection and replay leave the original messages and production consumer offset
 
 ## Try the demo
 
-Requires **Java 21 or 25, Docker and Git**.
+Requires only **Docker and Git**:
 
 ```sh
 git clone https://github.com/lMysticl/dlqdesk.git
 cd dlqdesk
+docker compose --profile app up -d --build --wait
 ```
 
-Download [dlqdesk-0.2.0.jar](https://github.com/lMysticl/dlqdesk/releases/download/v0.2.0/dlqdesk-0.2.0.jar) into the `dlqdesk` folder, then run:
+The first build takes a few minutes. Without Docker for the app, run Kafka with
+`docker compose up -d --wait`, download
+[dlqdesk-0.2.0.jar](https://github.com/lMysticl/dlqdesk/releases/download/v0.2.0/dlqdesk-0.2.0.jar)
+and start it with Java 21 or 25:
 
 ```sh
-docker compose up -d --wait
 java -jar dlqdesk-0.2.0.jar --spring.profiles.active=demo --dlqdesk.bootstrap-servers=localhost:59092
 ```
 
@@ -41,7 +44,7 @@ java -jar dlqdesk-0.2.0.jar --spring.profiles.active=demo --dlqdesk.bootstrap-se
 3. Inspect a message, fix its JSON if needed, select it and choose **Create preview**.
 4. Review the preview, then choose **Start replay**. Check the delivery history.
 
-Stop the demo broker with `docker compose down`. Local history is saved in `./data/`; the bundled demo token is public.
+Stop the demo with `docker compose --profile app down`. Delivery history is kept in the `dlqdesk-data` volume (in `./data/` when you run the JAR); the bundled demo token is public.
 
 ## Use your own topics
 
@@ -51,6 +54,6 @@ v0.2.0 supports one application instance, one source/target pair and up to 100 J
 
 ## For developers
 
-[Build and test](CONTRIBUTING.md) · [Test coverage](docs/validation.md) · [Compatibility](docs/compatibility.md) · [Engineering brief](docs/project-brief.md) · [Design](docs/design.md) · [Technical article](docs/article.md)
+[Build and test](CONTRIBUTING.md) · [Test coverage](docs/validation.md) · [Compatibility](docs/compatibility.md) · [Design](docs/design.md) · [Technical article](docs/article.md)
 
-Built by [Pavel Putrenkov](https://github.com/lMysticl). [MIT license](LICENSE).
+Built by [Pavlo Putrenkov](https://github.com/lMysticl). [MIT license](LICENSE).

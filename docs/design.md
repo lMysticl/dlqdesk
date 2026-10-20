@@ -1,6 +1,6 @@
 # Design contract — Porcelain & Vermilion
 
-The user selected reference B on 20 October 2026 after rejecting the previous administration-style composition. The new artistic reference preceded this implementation. Its palette is shared by both products: porcelain `#f7f1e7`, cocoa `#342d29`, lavender `#d8d1e8`, plum `#3e273c` and vermilion `#e9472b`. Text-bearing action backgrounds use a deeper vermilion `#d13923` to preserve contrast.
+DLQDesk and BatchLens share one palette: porcelain `#f7f1e7`, cocoa `#342d29`, lavender `#d8d1e8`, plum `#3e273c` and vermilion `#e9472b`. Text-bearing action backgrounds use a deeper vermilion `#d13923` to preserve contrast.
 
 ## Composition
 
@@ -20,7 +20,7 @@ Newsreader supplies the serif masthead, headings, large counts and italic margin
 
 ## Verification
 
-Use the documented frontend checks and actual packaged-JAR browser journeys. Inspect desktop and mobile captures against reference B, font loading, login, dialogs, failure detail, selected records and replay. The automated browser target is Chromium, including a mobile viewport; this is not evidence of physical-device, Safari or Firefox testing. Java 21/25 on Ubuntu/Windows is a separate compatibility gate.
+Use the documented frontend checks and actual packaged-JAR browser journeys. Inspect desktop and mobile captures for layout, font loading, login, dialogs, failure detail, selected records and replay. The automated browser target is Chromium, including a mobile viewport; this is not evidence of physical-device, Safari or Firefox testing. Java 21/25 on Ubuntu/Windows is a separate compatibility gate.
 
 ## Sources
 
@@ -28,4 +28,4 @@ Use the documented frontend checks and actual packaged-JAR browser journeys. Ins
 - [Geist typography](https://vercel.com/geist/typography): functional hierarchy and numeric rhythm.
 - [Figma UI3 rationale](https://www.figma.com/blog/behind-our-redesign-ui3/): keep working content central. These examples are precedents, not a popularity ranking or an endorsement.
 
-Reference B is an artistic target with illustrative content. Every shipped count, offset, payload and state comes from the actual application API.
+Every count, offset, payload and state shown in the UI comes from the actual application API.
