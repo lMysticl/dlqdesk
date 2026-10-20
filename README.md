@@ -1,11 +1,8 @@
 <p align="center"><img src="docs/assets/cover.svg" alt="DLQDesk — Failed delivery. Deliberate recovery." width="100%" /></p>
 
-<p align="center">
-<a href="https://github.com/lMysticl/dlqdesk/actions/workflows/ci.yml"><img alt="Build and verify" src="https://github.com/lMysticl/dlqdesk/actions/workflows/ci.yml/badge.svg" /></a>
-<a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-ad6008" /></a>
-<img alt="Java 21 and 25" src="https://img.shields.io/badge/Java-21%20%7C%2025-26394c" />
-<img alt="Kafka and React" src="https://img.shields.io/badge/Kafka-React-26394c" />
-</p>
+[![Build and verify](https://github.com/lMysticl/dlqdesk/actions/workflows/ci.yml/badge.svg)](https://github.com/lMysticl/dlqdesk/actions/workflows/ci.yml)
+
+`JAVA 21 / 25`　`REACT + TYPESCRIPT`　`SELF-HOSTED`　`MIT`
 
 **A deliberate recovery desk for Kafka dead letters.** Inspect a record, repair
 its JSON, freeze a preview and replay at a controlled rate. A persistent ledger
@@ -13,7 +10,7 @@ shows what Kafka acknowledged and what still needs an operator's decision.
 
 [Try the release](https://github.com/lMysticl/dlqdesk/releases/latest) ·
 [Usage](docs/usage.md) · [Delivery semantics](docs/architecture.md) ·
-[Validation](docs/validation.md) · [Engineering brief](docs/project-brief.md)
+[Validation](docs/validation.md) · [Engineering brief](docs/project-brief.md) · [Design notes](docs/design.md) · [Technical walkthrough](docs/article.md)
 
 ![Actual DLQDesk synthetic Kafka demo](docs/assets/workspace.png)
 
@@ -23,13 +20,13 @@ one malformed JSON payload. It is not a simulated inbox.*
 ## Try it locally
 
 You need Java 21 or 25 and Docker. Clone the repository for the broker setup and
-download `dlqdesk-0.1.0.jar` from the [release](https://github.com/lMysticl/dlqdesk/releases/tag/v0.1.0).
+download `dlqdesk-0.2.0.jar` from the [release](https://github.com/lMysticl/dlqdesk/releases/tag/v0.2.0).
 
 ```sh
 git clone https://github.com/lMysticl/dlqdesk.git
 cd dlqdesk
 docker compose up -d --wait
-java -jar dlqdesk-0.1.0.jar --spring.profiles.active=demo --dlqdesk.bootstrap-servers=localhost:59092
+java -jar dlqdesk-0.2.0.jar --spring.profiles.active=demo --dlqdesk.bootstrap-servers=localhost:59092
 ```
 
 Open **http://localhost:8092/**. Use **Use the bundled local demo token**, connect,
@@ -93,7 +90,7 @@ pause/resume, uncertain delivery and persistent recovery.
 
 ## Deliberate scope
 
-v0.1.0 is a single-instance, self-hosted tool for small, reviewed JSON replays.
+v0.2.0 is a single-instance, self-hosted tool for small, reviewed JSON replays.
 It is not a multi-cluster platform. It does not implement Schema Registry,
 Avro/Protobuf, tombstone replay, multi-user RBAC or a retention policy for the
 local ledger. Plan capacity and protect persisted payloads accordingly.

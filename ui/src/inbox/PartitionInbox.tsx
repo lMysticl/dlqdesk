@@ -5,7 +5,6 @@ import type { Message, Page, Selection } from "../api/types";
 import { referenceId } from "../api/types";
 import { RecordInspector } from "./RecordInspector";
 import { usePolling } from "../workspace/usePolling";
-import { timestamp } from "../workspace/format";
 
 export function PartitionInbox({
   client,
@@ -34,8 +33,8 @@ export function PartitionInbox({
   const { data, error, reload } = usePolling(request, 5000);
   const offset = selected ?? data?.messages[0]?.reference.offset;
   return (
-    <div className="split-workspace">
-      <section className="panel">
+    <>
+      <section className="panel record-index">
         <div className="panel-heading">
           <div>
             <h2>Records</h2>
@@ -73,58 +72,48 @@ export function PartitionInbox({
             {error.message}
           </div>
         )}
-        <div className="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Select</th>
-                <th>Offset / key</th>
-                <th>Payload</th>
-                <th className="optional-column">Received</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.messages.map((message) => {
-                const id = referenceId(message.reference);
-                const checked = selections.has(id);
-                return (
-                  <tr key={id} className={message.reference.offset === offset ? "selected" : ""}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        aria-label={`Select record ${id}`}
-                        checked={checked}
-                        disabled={!checked && selections.size >= 100}
-                        onChange={() => toggle(message)}
-                      />
-                    </td>
-                    <td>
-                      <button
-                        className="row-link mono"
-                        onClick={() => setSelected(message.reference.offset)}
-                      >
-                        {message.reference.offset}
-                      </button>
-                      <p className="message-key muted">{message.key ?? "null / binary key"}</p>
-                    </td>
-                    <td>
-                      <span
-                        className={`status ${message.validJson ? "status-completed" : "status-failed"}`}
-                      >
-                        <span />
-                        {message.validJson ? "JSON" : "REPAIR"}
-                      </span>
-                      <p className="record-error" title={message.error ?? message.problem ?? ""}>
-                        {message.error ?? message.problem ?? ""}
-                      </p>
-                    </td>
-                    <td className="optional-column muted">{timestamp(message.timestamp)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <ol className="message-index" aria-label="Source messages">
+          {data?.messages.map((message) => {
+            const id = referenceId(message.reference);
+            const checked = selections.has(id);
+            return (
+              <li
+                className="message-ticket"
+                key={id}
+                data-selected={message.reference.offset === offset}
+              >
+                <input
+                  type="checkbox"
+                  aria-label={`Select record ${id}`}
+                  checked={checked}
+                  disabled={!checked && selections.size >= 100}
+                  onChange={() => toggle(message)}
+                />
+                <button
+                  className="ticket-open"
+                  onClick={() => setSelected(message.reference.offset)}
+                  aria-label={`Inspect record ${id}`}
+                  aria-pressed={message.reference.offset === offset}
+                >
+                  <strong>{id}</strong>
+                  <span
+                    className={`status ${message.validJson ? "status-completed" : "status-failed"}`}
+                  >
+                    <span />
+                    {message.validJson ? "JSON" : "REPAIR"}
+                  </span>
+                </button>
+                <p className="message-key muted">{message.key ?? "null / binary key"}</p>
+                {(message.error || message.problem) && (
+                  <details>
+                    <summary>Rejection detail</summary>
+                    <p className="record-error">{message.error ?? message.problem}</p>
+                  </details>
+                )}
+              </li>
+            );
+          })}
+        </ol>
         {data && !data.messages.length && (
           <div className="empty-state">
             <h3>No records in this range</h3>
@@ -175,6 +164,6 @@ export function PartitionInbox({
           <p>Payload, original headers and repair controls appear here.</p>
         </div>
       )}
-    </div>
+    </>
   );
 }

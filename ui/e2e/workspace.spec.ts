@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
+import { verifyWorkspaceAppearance } from "./appearance";
 
 test("repair a real dead letter, freeze it, pause and resume acknowledged replay", async ({
   page,
@@ -10,6 +11,8 @@ test("repair a real dead letter, freeze it, pause and resume acknowledged replay
   await page.goto("./");
   await page.getByRole("button", { name: "Use the bundled local demo token" }).click();
   await page.getByRole("button", { name: "Connect workspace" }).click();
+  await expect(page.getByRole("heading", { name: "Dead-letter inbox" })).toBeVisible();
+  await verifyWorkspaceAppearance(page);
   const seed = page.getByRole("button", { name: "Add 12 demo records" });
   const seeded = page.waitForResponse(
     (response) => response.url().endsWith("/api/demo/seed") && response.status() === 200,
@@ -26,8 +29,8 @@ test("repair a real dead letter, freeze it, pause and resume acknowledged replay
   await page.getByLabel("Jump to offset").fill((BigInt(range.endOffset) - 6n).toString());
   await page.getByRole("button", { name: "Go to offset" }).click();
   await expect(page.getByRole("checkbox")).toHaveCount(6);
-  const malformed = page.getByRole("row").filter({ hasText: "REPAIR" }).first();
-  await malformed.getByRole("button").click();
+  const malformed = page.locator(".message-index li").filter({ hasText: "REPAIR" }).first();
+  await malformed.getByRole("button", { name: /Inspect record/ }).click();
   await page
     .getByLabel("Replay payload · JSON")
     .fill('{"orderId":1045,"amount":49.90,"currency":"USD"}');

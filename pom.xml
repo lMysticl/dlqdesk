@@ -9,7 +9,7 @@
   </parent>
   <groupId>io.github.lmysticl</groupId>
   <artifactId>dlqdesk</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <name>DLQDesk</name>
   <description>Inspect, preview and recover Kafka dead-letter records with an honest delivery ledger.</description>
   <url>https://github.com/lMysticl/dlqdesk</url>

@@ -1,3 +1,4 @@
+import { Routing } from "../components/Routing";
 import { useCallback, useState } from "react";
 import { ArrowRight, RefreshCw } from "lucide-react";
 import type { Client } from "../api/client";
@@ -60,9 +61,7 @@ export function InboxWorkspace({
           <p className="eyebrow">KAFKA RECOVERY WORKSPACE</p>
           <h1>Dead-letter inbox</h1>
           <p className="muted">
-            <code>{info.sourceTopic}</code>
-            <span className="topic-arrow">→</span>
-            <code>{info.targetTopic}</code> · Inspect before you replay.
+            Recover with intent. Inspect a record, review the exact payload, then publish.
           </p>
         </div>
         <div className="heading-actions">
@@ -110,50 +109,53 @@ export function InboxWorkspace({
         </select>
         <span>Selection spans partitions · {selections.size} / 100</span>
       </div>
-      <PartitionInbox
-        key={`${partition}:${partitions?.join(",")}`}
-        client={client}
-        partition={partition}
-        selections={selections}
-        toggle={toggle}
-        save={save}
-      />
-      <section className="panel preview-form">
-        <div>
-          <p className="eyebrow">01 INSPECT · 02 PREVIEW · 03 REPLAY</p>
-          <h2>{selections.size} records selected</h2>
-          <p className="field-help">
-            Preview freezes source fingerprints, keys, headers and output bytes. Nothing is
-            published yet.
-          </p>
-        </div>
-        <div className="preview-controls">
-          <label htmlFor="replay-rate">Records / second</label>
-          <input
-            id="replay-rate"
-            type="number"
-            min={1}
-            max={100}
-            value={rate}
-            onChange={(event) => setRate(Number(event.target.value))}
-          />
-          <button
-            className="button primary"
-            disabled={action.pending || selections.size === 0 || rate < 1 || rate > 100}
-            onClick={() => void preview()}
-          >
-            {action.pending ? "Working…" : "Create preview"}
-            <ArrowRight size={15} />
-          </button>
-          <button
-            className="text-button"
-            disabled={!selections.size || action.pending}
-            onClick={() => setSelections(new Map())}
-          >
-            Clear selection
-          </button>
-        </div>
-      </section>
+      <div className="workshop-grid">
+        <PartitionInbox
+          key={`${partition}:${partitions?.join(",")}`}
+          client={client}
+          partition={partition}
+          selections={selections}
+          toggle={toggle}
+          save={save}
+        />
+        <section className="panel preview-form">
+          <div>
+            <p className="eyebrow">01 INSPECT · 02 PREVIEW · 03 REPLAY</p>
+            <h2>{selections.size} records selected</h2>
+            <p className="field-help">
+              Preview freezes source fingerprints, keys, headers and output bytes. Nothing is
+              published yet.
+            </p>
+          </div>
+          <div className="preview-controls">
+            <label htmlFor="replay-rate">Records / second</label>
+            <input
+              id="replay-rate"
+              type="number"
+              min={1}
+              max={100}
+              value={rate}
+              onChange={(event) => setRate(Number(event.target.value))}
+            />
+            <button
+              className="button primary"
+              disabled={action.pending || selections.size === 0 || rate < 1 || rate > 100}
+              onClick={() => void preview()}
+            >
+              {action.pending ? "Working…" : "Create preview"}
+              <ArrowRight size={15} />
+            </button>
+            <button
+              className="text-button"
+              disabled={!selections.size || action.pending}
+              onClick={() => setSelections(new Map())}
+            >
+              Clear selection
+            </button>
+          </div>
+        </section>
+      </div>
+      <Routing source={info.sourceTopic} target={info.targetTopic} />
     </>
   );
 }

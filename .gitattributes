@@ -3,3 +3,7 @@
 *.webm binary
 *.jar binary
 *.zip binary
+*.woff2 binary
+*.ttf binary
+# Preserve upstream font licenses verbatim, including their original spacing.
+ui/public/fonts/*OFL.txt -whitespace

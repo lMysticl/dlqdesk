@@ -12,6 +12,6 @@ body:
     id: environment
     attributes:
       label: Version and environment
-      placeholder: v0.1.0, Java 21, Windows 11 / Linux
+      placeholder: v0.2.0, Java 21, Windows 11 / Linux
     validations:
       required: true

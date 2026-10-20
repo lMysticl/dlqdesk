@@ -48,7 +48,7 @@ Keep credentials outside Git. Use Kafka ACLs and a trusted TLS proxy for remote 
 Run one application instance per ledger. Do not share the file database across
 instances or edit replay tables by hand. H2's file locking is a guard, not a
 distributed replay lease. Back up a stopped application and its database files.
-Original and edited payloads remain in the ledger; v0.1.0 does not prune them.
+Original and edited payloads remain in the ledger; v0.2.0 does not prune them.
 
 ## Delivery semantics and recovery
 

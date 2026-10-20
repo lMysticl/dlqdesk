@@ -1,3 +1,4 @@
+import { Brand } from "./Brand";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { ArrowRight, KeyRound, ShieldCheck } from "lucide-react";
@@ -28,7 +29,7 @@ export function Login({
     <div className={"login-page dlq-theme"}>
       <div className="login-art">
         <div className="brand">
-          <span className="brand-mark">D</span>DLQDesk
+          <Brand />
         </div>
         <div>
           <p className="eyebrow">OPERATIONS, IN FOCUS</p>

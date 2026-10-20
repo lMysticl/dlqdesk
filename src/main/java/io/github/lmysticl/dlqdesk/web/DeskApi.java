@@ -48,7 +48,7 @@ public final class DeskApi {
   @GetMapping("/info")
   public Info info() {
     return new Info(
-        "0.1.0", settings.dltTopic(), settings.targetTopic(), settings.demo(), 100, 100);
+        "0.2.0", settings.dltTopic(), settings.targetTopic(), settings.demo(), 100, 100);
   }
 
   @GetMapping("/partitions")

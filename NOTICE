@@ -5,3 +5,7 @@ Original project code is licensed under MIT. Dependencies retain their own licen
 React, React DOM and Lucide license texts are bundled with the UI in
 third-party-licenses.txt. Executable JARs retain nested dependencies and their
 META-INF license/notice files. This MIT license does not relicense those dependencies.
+
+Bundled Geist Sans and Geist Mono fonts: Copyright Vercel, Inc.; SIL Open Font License 1.1. The complete license and pinned source hashes are in ui/public/fonts/ and packaged fonts/.
+
+Newsreader typeface: Copyright 2020 The Newsreader Project Authors; SIL Open Font License 1.1. License and pinned source hashes ship in fonts/.

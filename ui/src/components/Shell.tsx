@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { BookOpen, ListTree, LogOut, Radio, Workflow } from "lucide-react";
-
+import { LogOut } from "lucide-react";
+import { Brand } from "./Brand";
 export function Shell({
   demo,
   active,
@@ -15,20 +15,21 @@ export function Shell({
   children: ReactNode;
 }) {
   return (
-    <div className={"application dlq-theme"}>
-      <aside className="sidebar">
-        <a className="brand" href={"./index.html"}>
-          <span className="brand-mark">D</span>
-          <span>DLQDesk</span>
+    <div className="application dlq-theme">
+      <a className="skip-link" href="#workspace">
+        Skip to workspace
+      </a>
+      <header className="masthead">
+        <a className="brand" href="./index.html" aria-label="DLQDesk home">
+          <Brand />
         </a>
-        <div className="sidebar-label">WORKSPACE</div>
-        <nav aria-label="Workspace navigation">
+        <span className="edition">/ record workshop</span>
+        <nav className="primary-nav" aria-label="Workspace navigation">
           <button
             className={active === "inbox" ? "nav-item active" : "nav-item"}
             onClick={() => onNavigate("inbox")}
             aria-current={active === "inbox" ? "page" : undefined}
           >
-            <ListTree size={18} />
             Dead-letter inbox
           </button>
           <button
@@ -36,50 +37,39 @@ export function Shell({
             onClick={() => onNavigate("replays")}
             aria-current={active === "replays" ? "page" : undefined}
           >
-            <Workflow size={18} />
             Replay plans
           </button>
           <a
             className="nav-item"
-            href={"https://github.com/lMysticl/dlqdesk/blob/main/docs/usage.md"}
+            href="https://github.com/lMysticl/dlqdesk/blob/main/docs/usage.md"
             target="_blank"
             rel="noreferrer"
           >
-            <BookOpen size={18} />
-            Documentation
+            Field guide ↗
           </a>
         </nav>
-        <div className="sidebar-footer">
-          <span className="version-tag">v0.1.0</span>
-          <p>A deliberate path to recovery.</p>
-          <a href={"https://github.com/lMysticl/dlqdesk"} target="_blank" rel="noreferrer">
-            View source ↗
-          </a>
+        <div className="connection-label">
+          <span className="connection-dot" />
+          {demo ? "LOCAL DEMO" : "CONNECTED"}
         </div>
-      </aside>
-      <div className="application-body">
-        <header className="topbar">
-          <div className="breadcrumb">
-            <Radio size={14} />
-            <span>DLQDesk</span>
-            <span className="slash">/</span>
-            <span>{active === "replays" ? "Replay plans" : "Inbox"}</span>
-          </div>
-          <div className="connection-label">
-            <span className="connection-dot" />
-            {demo ? "LOCAL DEMO" : "CONNECTED"}
-          </div>
-          <button
-            className="icon-button"
-            title="Disconnect"
-            aria-label="Disconnect"
-            onClick={onDisconnect}
-          >
-            <LogOut size={17} />
-          </button>
-        </header>
-        <main id="workspace">{children}</main>
-      </div>
+        <button
+          className="icon-button"
+          title="Disconnect"
+          aria-label="Disconnect"
+          onClick={onDisconnect}
+        >
+          <LogOut size={16} />
+        </button>
+      </header>
+      <main id="workspace" tabIndex={-1}>
+        {children}
+      </main>
+      <footer className="studio-footer">
+        <span>FROM DEAD LETTERS TO LIVE AGAIN.</span>
+        <a href="https://github.com/lMysticl/dlqdesk" target="_blank" rel="noreferrer">
+          OPEN SOURCE / v0.2.0 ↗
+        </a>
+      </footer>
     </div>
   );
 }

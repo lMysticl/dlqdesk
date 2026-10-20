@@ -124,60 +124,64 @@ export function ReplayDetail({ client, id }: { client: Client; id: string }) {
           uncertain entry to record your decision. Automatic resend is blocked.
         </div>
       )}
-      <div className="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>Source</th>
-              <th>Change</th>
-              <th>Result</th>
-              <th>Destination</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.entries.map((item) => (
-              <tr key={item.index}>
-                <td>
-                  <button className="row-link mono" onClick={() => setEntry(item)}>
-                    {referenceId(item.source)}
-                  </button>
-                  <p className="muted message-key">{item.key ?? "null / binary key"}</p>
-                </td>
-                <td>
-                  <span className="change-tag">{item.edited ? "EDITED JSON" : "ORIGINAL"}</span>
-                  <p className="hash" title={item.payloadHash}>
-                    {item.payloadHash.slice(0, 10)}…
-                  </p>
-                </td>
-                <td>
-                  <Status value={item.state} />
-                </td>
-                <td className="mono">
-                  {item.targetPartition === null
-                    ? "—"
-                    : `${item.targetPartition}:${item.targetOffset}`}
-                </td>
+      <div className="delivery-grid">
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Change</th>
+                <th>Result</th>
+                <th>Destination</th>
               </tr>
+            </thead>
+            <tbody>
+              {data.entries.map((item) => (
+                <tr key={item.index}>
+                  <td>
+                    <button className="row-link mono" onClick={() => setEntry(item)}>
+                      {referenceId(item.source)}
+                    </button>
+                    <p className="muted message-key">{item.key ?? "null / binary key"}</p>
+                  </td>
+                  <td>
+                    <span className="change-tag">{item.edited ? "EDITED JSON" : "ORIGINAL"}</span>
+                    <p className="hash" title={item.payloadHash}>
+                      {item.payloadHash.slice(0, 10)}…
+                    </p>
+                  </td>
+                  <td>
+                    <Status value={item.state} />
+                  </td>
+                  <td className="mono">
+                    {item.targetPartition === null
+                      ? "—"
+                      : `${item.targetPartition}:${item.targetOffset}`}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <aside aria-label="Audit trail">
+          <div className="panel-heading">
+            <h3>Audit trail</h3>
+            <span className="panel-subtitle">Latest 30 events</span>
+          </div>
+          <ol className="audit-list">
+            {data.audit.map((event, index) => (
+              <li key={`${event.timestamp}:${index}`}>
+                <span className="audit-dot" />
+                <div>
+                  <strong>{label(event.action)}</strong>
+                  <p>{event.detail}</p>
+                  <time>{timestamp(event.timestamp)}</time>
+                </div>
+              </li>
             ))}
-          </tbody>
-        </table>
+          </ol>
+        </aside>
       </div>
-      <div className="panel-heading">
-        <h3>Audit trail</h3>
-        <span className="panel-subtitle">Latest 30 events</span>
-      </div>
-      <ol className="audit-list">
-        {data.audit.map((event, index) => (
-          <li key={`${event.timestamp}:${index}`}>
-            <span className="audit-dot" />
-            <div>
-              <strong>{label(event.action)}</strong>
-              <p>{event.detail}</p>
-              <time>{timestamp(event.timestamp)}</time>
-            </div>
-          </li>
-        ))}
-      </ol>
       {confirm && (
         <Dialog
           title={confirm === "start" ? "Publish this preview?" : "Resume pending records?"}
