@@ -1,11 +1,10 @@
 name: Publish container image
+# Releases push the image from release.yml; use this to republish a version manually.
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       version:
-        description: Image version tag, for example 0.2.0
+        description: Image version tag, for example 0.3.0
         required: true
 permissions:
   contents: read

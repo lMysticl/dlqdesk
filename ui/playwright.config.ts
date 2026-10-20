@@ -28,7 +28,7 @@ export default defineConfig({
     ? undefined
     : {
         command:
-          "java -Xmx512m -jar ../target/dlqdesk-0.2.0.jar --spring.datasource.url=jdbc:h2:mem:browser-contract --spring.profiles.active=demo --dlqdesk.bootstrap-servers=localhost:59092",
+          "java -Xmx512m -jar ../target/dlqdesk-0.3.0.jar --spring.datasource.url=jdbc:h2:mem:browser-contract --spring.profiles.active=demo --dlqdesk.bootstrap-servers=localhost:59092",
         url: "http://127.0.0.1:8092/",
         reuseExistingServer: false,
         timeout: 45000,

@@ -8,10 +8,10 @@ DLQDesk is a small self-hosted Java and React workspace for that sequence: inspe
 
 ## Run the exercise
 
-Clone [the source](https://github.com/lMysticl/dlqdesk), start the included local broker with `docker compose up -d --wait`, and download [dlqdesk-0.2.0.jar](https://github.com/lMysticl/dlqdesk/releases/tag/v0.2.0). With Java 21 or 25:
+Clone [the source](https://github.com/lMysticl/dlqdesk), start the included local broker with `docker compose up -d --wait`, and download [dlqdesk-0.3.0.jar](https://github.com/lMysticl/dlqdesk/releases/tag/v0.3.0). With Java 21 or 25:
 
 ```sh
-java -jar dlqdesk-0.2.0.jar --spring.profiles.active=demo --dlqdesk.bootstrap-servers=localhost:59092
+java -jar dlqdesk-0.3.0.jar --spring.profiles.active=demo --dlqdesk.bootstrap-servers=localhost:59092
 ```
 
 Open `http://localhost:8092/` and use the bundled local demo token. Add the 12 synthetic records, inspect partition 1 and repair its malformed JSON. Select records and create a preview. Nothing has been published at that point. Review the frozen payload, target topic and rate, then confirm publication. At one record per second the pause and resume behavior is easy to observe.

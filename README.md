@@ -32,11 +32,11 @@ docker compose --profile app up -d --build --wait
 
 The first build takes a few minutes. Without Docker for the app, run Kafka with
 `docker compose up -d --wait`, download
-[dlqdesk-0.2.0.jar](https://github.com/lMysticl/dlqdesk/releases/download/v0.2.0/dlqdesk-0.2.0.jar)
+[dlqdesk-0.3.0.jar](https://github.com/lMysticl/dlqdesk/releases/download/v0.3.0/dlqdesk-0.3.0.jar)
 and start it with Java 21 or 25:
 
 ```sh
-java -jar dlqdesk-0.2.0.jar --spring.profiles.active=demo --dlqdesk.bootstrap-servers=localhost:59092
+java -jar dlqdesk-0.3.0.jar --spring.profiles.active=demo --dlqdesk.bootstrap-servers=localhost:59092
 ```
 
 1. Open [localhost:8092](http://localhost:8092/).
@@ -50,7 +50,7 @@ Stop the demo with `docker compose --profile app down`. Delivery history is kept
 
 Follow the [deployment guide](docs/usage.md#deployment) to configure your token, broker and topics. Run without the `demo` profile.
 
-v0.2.0 supports one application instance, one source/target pair and up to 100 JSON messages per replay. **SENT means Kafka accepted the message, not that the receiving application processed it.** Uncertain delivery needs review; replay can produce duplicates. See [delivery semantics](docs/usage.md#delivery-semantics-and-recovery) and [security](SECURITY.md).
+v0.3.0 supports one application instance, one source/target pair and up to 100 JSON messages per replay. **SENT means Kafka accepted the message, not that the receiving application processed it.** Uncertain delivery needs review; replay can produce duplicates. See [delivery semantics](docs/usage.md#delivery-semantics-and-recovery) and [security](SECURITY.md).
 
 ## For developers
 

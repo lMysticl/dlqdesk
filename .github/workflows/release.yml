@@ -1,0 +1,113 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+  packages: write
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      MAVEN_OPTS: --enable-native-access=ALL-UNNAMED -Dfile.encoding=UTF-8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - name: Check that the tag matches the build version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          ACTUAL="$(./mvnw -B -q help:evaluate -Dexpression=project.version -DforceStdout)"
+          if [ "$VERSION" != "$ACTUAL" ]; then echo "Tag $GITHUB_REF_NAME does not match version $ACTUAL"; exit 1; fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+      - name: Build and test the frontend
+        working-directory: ui
+        run: npm ci && npm run check && npm test && npm run build
+      - name: Build and test with the real Kafka contract
+        run: ./mvnw -B verify -Pintegration
+      - name: Build and smoke-test the container demo
+        run: |
+          docker compose --profile app up -d --build --wait
+          curl -fsS http://127.0.0.1:8092/ | grep -qi '<div id="root"'
+          docker compose --profile app down -v
+      - name: Collect assets with checksums and a verification record
+        run: |
+          set -euo pipefail
+          OUT=release-assets
+          mkdir "$OUT"
+          cp "target/dlqdesk-$VERSION.jar" "$OUT/"
+          git archive --format=zip --prefix="dlqdesk-$VERSION/" -o "$OUT/dlqdesk-$VERSION-source.zip" HEAD
+          (cd "$OUT" && sha256sum -- * > SHA256SUMS)
+          python3 - "$OUT" <<'PY'
+          import hashlib, json, os, pathlib, platform, subprocess, sys
+          out = pathlib.Path(sys.argv[1])
+          java = next(l for l in subprocess.run(["java", "-version"], capture_output=True, text=True).stderr.splitlines() if " version " in l)
+          record = {
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "tag": os.environ["GITHUB_REF_NAME"],
+              "commit": os.environ["GITHUB_SHA"],
+              "workflowRun": f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+              "builtWith": {"java": java, "os": platform.platform()},
+              "checks": ["npm run check", "npm test", "npm run build", "./mvnw -B verify -Pintegration",
+                         "docker compose --profile app up --build (UI served)"],
+              "assets": {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                         for p in sorted(out.iterdir()) if p.name != "SHA256SUMS"},
+              "containerImage": f"ghcr.io/lmysticl/dlqdesk:{os.environ['VERSION']}",
+              "signed": False,
+          }
+          (out / "VERIFICATION.json").write_text(json.dumps(record, indent=2) + "\n")
+          PY
+          (cd "$OUT" && sha256sum VERIFICATION.json > VERIFICATION.json.sha256)
+      - name: Push the container image
+        env:
+          TOKEN: ${{ github.token }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          IMAGE=ghcr.io/lmysticl/dlqdesk
+          echo "$TOKEN" | docker login ghcr.io -u "$ACTOR" --password-stdin
+          # Push exactly the image the container demo smoke test built and served.
+          docker tag dlqdesk:local "$IMAGE:$VERSION"
+          docker tag dlqdesk:local "$IMAGE:latest"
+          docker push "$IMAGE:$VERSION"
+          docker push "$IMAGE:latest"
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<EOF
+          Inspect failed Kafka messages. Fix the JSON and send them again.
+
+          ### Run the demo with Docker
+
+          \`\`\`sh
+          git clone https://github.com/$GITHUB_REPOSITORY.git
+          cd dlqdesk
+          git checkout $GITHUB_REF_NAME
+          docker compose --profile app up -d --build --wait
+          \`\`\`
+
+          Open http://localhost:8092/, use the bundled demo token, add the 12 demo records, fix one, preview and replay. Or run **dlqdesk-$VERSION.jar** below with Java 21 or 25 next to \`docker compose up -d --wait\`.
+
+          Container image: \`ghcr.io/lmysticl/dlqdesk:$VERSION\`
+
+          [User guide](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/docs/usage.md) · [Security](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/SECURITY.md) · [Changelog](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/CHANGELOG.md)
+
+          ### Build and verification
+
+          Built and tested by [this workflow run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID) from $GITHUB_SHA on Ubuntu with Java 21, including the real Kafka contract and the container demo. \`SHA256SUMS\` covers the JAR and source; \`VERIFICATION.json\` records the commit, run and checksums. Assets are unsigned.
+          EOF
+          gh release create "$GITHUB_REF_NAME" release-assets/* --verify-tag --title "$GITHUB_REF_NAME" --notes-file notes.md

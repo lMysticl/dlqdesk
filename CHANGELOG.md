@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 — 2026-10-20
+
+- Run the whole demo with one command: `docker compose --profile app up -d --build --wait`
+  builds DLQDesk from source and starts it next to the local Kafka broker.
+- Publish a container image to `ghcr.io/lmysticl/dlqdesk` with each release.
+- Release assets are built and checksummed by a tag-driven workflow.
+- Documentation no longer contains launch drafts or process notes.
+
 ## 0.2.0 — 2026-10-20
 
 - Porcelain & Vermilion: a new editorial workspace with horizontal navigation, distinct product identity and locally bundled OFL-licensed Geist typography.
